@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pattrono · CostVision — Dados de custos para indústria</title>
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme:dark;
+    --bg:#14161A; --ink:#EEF0F2; --muted:#A9B0B8; --faint:#7E858D;
+    --accent:#C98B4B; --card:#1B1E23; --line:#292D34; --hero-ink:#EEF0F2;
+    --band:#171A1F; --grid:rgba(238,240,242,.035); --glow:rgba(201,139,75,.10);
+    --sans:'Archivo','Segoe UI',system-ui,sans-serif;
+    --mono:'IBM Plex Mono','Cascadia Mono',Consolas,monospace;
+  }
+
+  *{ box-sizing:border-box; }
+  body{ margin:0; color:var(--ink);
+    background:
+      radial-gradient(1000px 480px at 12% -4%, var(--glow), transparent 65%),
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+      var(--bg);
+    background-repeat:no-repeat, repeat, repeat, no-repeat;
+    background-size:auto, 56px 56px, 56px 56px, auto;
+    font-family:var(--sans); line-height:1.6; }
+  .wrap{ max-width:960px; margin:0 auto; padding:0 24px; }
+
+  /* topo + marca 3b Custódia */
+  html{ scroll-behavior:smooth; scroll-padding-top:80px; }
+  header.topbar{ position:sticky; top:0; z-index:200;
+    background:rgba(20,22,26,.82);
+    -webkit-backdrop-filter:blur(14px) saturate(1.2); backdrop-filter:blur(14px) saturate(1.2);
+    border-bottom:1px solid var(--line);
+    box-shadow:0 10px 30px -18px rgba(0,0,0,.85); }
+  header.topbar::before{ content:''; position:absolute; left:0; right:0; top:0; height:2px;
+    background:linear-gradient(90deg, var(--accent) 0%, rgba(201,139,75,.28) 55%, transparent 100%); }
+  .top-inner{ display:flex; align-items:center; justify-content:space-between; gap:18px;
+    padding-top:13px; padding-bottom:13px; }
+  a.logo-lockup{ text-decoration:none; color:inherit; }
+  .logo-lockup{ display:flex; align-items:center; gap:13px; }
+  .logo-lockup:hover .mark3b{ border-color:var(--accent); }
+  .mark3b{ width:34px; height:34px; border:2.5px solid var(--ink); border-radius:50%;
+    display:inline-flex; align-items:center; justify-content:center; flex:none;
+    transition:border-color .18s ease; }
+  .mark3b span{ width:13px; height:13px; background:var(--accent); display:block; }
+  .logo-word{ font-weight:500; letter-spacing:.15em; text-transform:uppercase; font-size:1.02rem; color:var(--ink); line-height:1.2; }
+  .logo-desc{ font-family:var(--mono); font-size:.56rem; letter-spacing:.19em; text-transform:uppercase; color:var(--faint); margin-top:3px; }
+  nav{ display:flex; align-items:center; gap:10px; }
+  nav a{ color:var(--ink); text-decoration:none; padding:9px 15px;
+    font-family:var(--mono); font-size:.73rem; font-weight:500; letter-spacing:.14em; text-transform:uppercase;
+    background:rgba(238,240,242,.04); border:1px solid var(--line); border-radius:3px;
+    transition:color .16s ease, border-color .16s ease, background .16s ease; }
+  nav a:hover{ color:var(--accent); border-color:var(--accent); background:rgba(201,139,75,.08); }
+  .cta.mini{ padding:9px 16px; font-size:.66rem; font-family:var(--mono); letter-spacing:.12em;
+    text-transform:uppercase; font-weight:500; border-radius:2px; white-space:nowrap; }
+  nav a:focus-visible, a.cta:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+  /* hero */
+  .hero{ padding:54px 0 60px; }
+  .eyebrow{ font-family:var(--mono); text-transform:uppercase; letter-spacing:.22em; font-size:.68rem; color:var(--faint); font-weight:500; }
+  h1{ font-weight:800; letter-spacing:-0.02em; font-size:clamp(1.9rem, 4.4vw, 2.9rem);
+    line-height:1.12; margin:.5em 0 .45em; max-width:20ch; text-wrap:balance; color:var(--hero-ink); }
+  .hero p.sub{ font-size:1.06rem; color:var(--muted); max-width:56ch; margin:0 0 30px; line-height:1.55; }
+  a.cta{ display:inline-block; background:var(--accent); color:#14161A; text-decoration:none;
+    padding:13px 26px; border-radius:3px; font-weight:600; font-size:.95rem; }
+  a.cta:hover{ background:#E0A765; }
+  a.cta.ghost{ background:transparent; color:var(--ink); border:1px solid var(--line); margin-left:10px; }
+  a.cta.ghost:hover{ background:var(--card); }
+  .hero-proof{ display:flex; gap:12px 26px; flex-wrap:wrap; margin-top:44px; }
+  .hero-proof .hp{ font-family:var(--mono); font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); }
+  .hero-proof .hp b{ color:var(--ink); font-weight:500; }
+  .hero-proof .hp .ck{ color:var(--accent); font-weight:700; margin-right:6px; }
+
+  /* seções */
+  section{ padding:50px 0; border-top:1px solid var(--line); }
+  /* faixas de fundo que sangram até a borda da tela */
+  section.band{ background:var(--band); box-shadow:0 0 0 100vmax var(--band); clip-path:inset(0 -100vmax); }
+  h2{ font-weight:700; letter-spacing:-0.015em; font-size:1.55rem; margin:0 0 10px; text-wrap:balance; }
+  .kicker{ font-family:var(--mono); text-transform:uppercase; letter-spacing:.2em; font-size:.66rem; color:var(--accent); font-weight:500; margin-bottom:6px; }
+  p.lead{ color:var(--muted); max-width:60ch; margin-top:6px; line-height:1.55; }
+
+  .grid3{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:34px; }
+  @media (max-width:720px){ .grid3{ grid-template-columns:1fr; } }
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:4px; padding:24px 24px 20px; }
+  .card h3{ font-size:1rem; font-weight:600; margin:.6em 0 .4em; letter-spacing:-0.01em; }
+  .card p{ font-size:.92rem; color:var(--muted); margin:0; line-height:1.55; }
+  .card .mark{ width:26px; height:3px; background:var(--accent); }
+
+  .passos{ margin-top:30px; display:grid; gap:0; }
+  .passo{ display:grid; grid-template-columns:56px 1fr; gap:18px; padding:22px 0; border-bottom:1px solid var(--line); }
+  .passo:last-child{ border-bottom:none; }
+  .passo .n{ font-family:var(--mono); font-size:.78rem; font-weight:500; letter-spacing:.12em;
+    background:var(--accent); color:#14161A; padding:4px 9px; border-radius:2px;
+    width:fit-content; height:fit-content; line-height:1.3; }
+  .passo h3{ margin:0 0 6px; font-size:1.02rem; font-weight:600; }
+  .passo p{ margin:0; color:var(--muted); font-size:.94rem; max-width:60ch; line-height:1.55; }
+
+  .case{ background:var(--card); border:1px solid var(--line); border-left:3px solid var(--accent);
+    border-radius:0 4px 4px 0; padding:26px 28px; margin-top:30px; max-width:66ch; }
+  .case p{ margin:.4em 0; line-height:1.55; }
+  .case .quem{ font-family:var(--mono); color:var(--faint); font-size:.68rem; text-transform:uppercase; letter-spacing:.16em; }
+
+  .duo{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:30px; }
+  @media (max-width:720px){ .duo{ grid-template-columns:1fr; } }
+
+  .manifesto{ text-align:center; padding:56px 0; }
+  .manifesto blockquote{ font-family:Georgia,serif; font-size:clamp(1.3rem,3vw,1.8rem); font-weight:400;
+    max-width:26ch; margin:0 auto; line-height:1.4; text-wrap:balance; }
+  .manifesto .a{ color:var(--accent); }
+  .manifesto figcaption{ color:var(--muted); font-size:.85rem; margin-top:18px; letter-spacing:.14em; text-transform:uppercase; }
+
+  /* ---- demonstração: CostVision ---- */
+  .fict{ display:inline-block; font-family:var(--mono); font-size:.64rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--faint); border:1px dashed var(--line); border-radius:2px; padding:4px 12px; margin:14px 0 4px; }
+
+  /* moldura de navegador */
+  .browser{ margin-top:14px; border:1px solid var(--line); border-radius:12px; overflow:hidden;
+    box-shadow:0 18px 44px -18px rgba(0,0,0,.45); background:#11151b; }
+  .browser .b-bar{ display:flex; align-items:center; gap:10px; padding:9px 14px;
+    background:#181d25; border-bottom:1px solid #1f2730; }
+  .browser .b-dots{ display:flex; gap:6px; flex:0 0 auto; }
+  .browser .b-dots span{ width:10px; height:10px; border-radius:50%; background:#2b3038; display:block; }
+  .browser .b-url{ flex:1; max-width:420px; background:#0a0c0f; border:1px solid #1f2730; border-radius:14px;
+    color:#8a93a3; font-size:11px; padding:4px 14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+  .browser .b-url b{ color:#e8ecf2; font-weight:500; }
+
+  .rep{ background:#0a0c0f; color:#e8ecf2;
+    overflow:hidden; font-size:13px; line-height:1.45; text-align:left;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+  .rep .cv-mark{ display:flex; align-items:center; gap:7px; margin-bottom:6px; font-size:12.5px;
+    font-weight:700; letter-spacing:.04em; }
+  .rep .cv-mark .cv-dot{ width:9px; height:9px; border-radius:3px; flex:0 0 auto;
+    background:linear-gradient(135deg,#3b82f6,#06b6d4); }
+  .rep .cv-mark .cv-n{ color:#e8ecf2; } .rep .cv-mark .cv-v{ color:#3b82f6; }
+  .rep .cv-mark .cv-tag{ font-weight:400; font-size:10px; color:#5c6573; letter-spacing:.08em;
+    text-transform:uppercase; border:1px solid #1f2730; border-radius:10px; padding:2px 8px; margin-left:2px; }
+  .rep .r-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    padding:14px 18px; background:linear-gradient(135deg,#11151b,#13181f); border-bottom:1px solid #1f2730; }
+  .rep .r-head .r-title{ font-size:17px; font-weight:600; letter-spacing:-.3px; }
+  .rep .r-head .r-title .dim{ color:#8a93a3; font-weight:400; }
+  .rep .r-sub{ color:#8a93a3; font-size:12px; margin-top:2px; }
+  .rep .r-meta{ text-align:right; color:#8a93a3; font-size:11.5px; line-height:1.5; }
+  .rep .r-meta b{ color:#e8ecf2; font-weight:600; }
+  .rep .r-tags{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .rep .rtag{ font-size:10.5px; padding:3px 8px; border-radius:4px; font-weight:500; display:inline-block; }
+  .rep .rtag.ok{ background:#10b98122; color:#10b981; border:1px solid #10b98144; }
+  .rep .rtag.info{ background:#3b82f622; color:#3b82f6; border:1px solid #3b82f644; }
+  .rep .rtag.warn{ background:#f59e0b22; color:#f59e0b; border:1px solid #f59e0b44; }
+  .rep .r-tabs{ display:flex; gap:2px; flex-wrap:wrap; border-bottom:1px solid #1f2730; background:#0a0c0f; padding:4px 10px 0; }
+  .rep .r-tab{ padding:9px 12px; cursor:pointer; color:#8a93a3; border:none; background:none; font:inherit;
+    border-bottom:2px solid transparent; font-size:12.5px; font-weight:500; white-space:nowrap; }
+  .rep .r-tab:hover{ color:#e8ecf2; }
+  .rep .r-tab.active{ color:#3b82f6; border-bottom-color:#3b82f6; }
+  .rep .r-tab:focus-visible{ outline:2px solid #3b82f6; outline-offset:-2px; }
+  .rep .r-pane{ display:none; padding:14px 14px 16px; }
+  .rep .r-pane.active{ display:block; }
+
+  .rep .kpi-row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(148px,1fr)); gap:9px; margin-bottom:12px; }
+  .rep .kpi{ background:#13181f; border:1px solid #1f2730; border-radius:10px; padding:10px 12px; }
+  .rep .kpi .l{ font-size:10px; text-transform:uppercase; color:#8a93a3; letter-spacing:.5px; margin-bottom:4px; }
+  .rep .kpi .v{ font-size:18px; font-weight:600; font-variant-numeric:tabular-nums; }
+  .rep .kpi .s{ font-size:10.5px; color:#8a93a3; margin-top:2px; }
+  .rep .kpi .d{ font-size:10.5px; margin-top:2px; font-variant-numeric:tabular-nums; }
+  .rep .kpi .d.pos{ color:#10b981; } .rep .kpi .d.neg{ color:#ef4444; }
+  .rep .kpi.blue .v{ color:#3b82f6; } .rep .kpi.green .v{ color:#10b981; }
+  .rep .kpi.yellow .v{ color:#f59e0b; } .rep .kpi.red .v{ color:#ef4444; }
+
+  .rep .r-card{ background:#13181f; border:1px solid #1f2730; border-radius:10px; padding:12px; margin-bottom:12px; }
+  .rep .r-card h4{ font-size:11.5px; text-transform:uppercase; color:#8a93a3; letter-spacing:.5px;
+    margin:0 0 10px; font-weight:600; }
+  .rep .r-card .sub-note{ color:#8a93a3; font-size:11px; margin:-6px 0 10px; }
+  .rep .grid2r{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:860px){ .rep .grid2r{ grid-template-columns:1fr; } }
+  .rep .chart-scroll{ overflow-x:auto; }
+  .rep .chart-scroll svg{ display:block; min-width:560px; width:100%; height:auto; }
+  .rep .r-legend{ display:flex; flex-wrap:wrap; gap:14px; margin-top:8px; font-size:11px; color:#8a93a3; }
+  .rep .r-legend .it{ display:inline-flex; align-items:center; gap:6px; }
+  .rep .r-legend .sw{ width:10px; height:10px; border-radius:2px; display:inline-block; }
+  .rep .r-legend .ln{ width:16px; height:0; border-top:2px dashed #60a5fa; display:inline-block; }
+
+  /* barras horizontais em HTML */
+  .rep .hb{ display:grid; grid-template-columns:minmax(110px,160px) 1fr 74px; gap:8px; align-items:center;
+    font-size:11.5px; margin:6px 0; }
+  .rep .hb .lab{ color:#8a93a3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align:right; }
+  .rep .hb .track{ background:#11151b; border-radius:3px; height:14px; }
+  .rep .hb .bar{ height:14px; border-radius:3px; background:#3b82f6; min-width:2px; }
+  .rep .hb .val{ color:#e8ecf2; font-variant-numeric:tabular-nums; text-align:right; }
+
+  /* donut */
+  .rep .donut-wrap{ display:flex; gap:18px; align-items:center; flex-wrap:wrap; }
+  .rep .donut-wrap svg{ flex:0 0 auto; }
+  .rep .donut-leg{ font-size:11.5px; color:#8a93a3; display:grid; gap:5px; min-width:180px; }
+  .rep .donut-leg .it{ display:flex; align-items:center; gap:7px; }
+  .rep .donut-leg .sw{ width:10px; height:10px; border-radius:2px; flex:0 0 auto; }
+  .rep .donut-leg b{ color:#e8ecf2; font-variant-numeric:tabular-nums; }
+
+  .rep .simulator{ background:linear-gradient(135deg,#1e293b22,#0c4a6e22); border:1px solid #334155;
+    padding:12px; border-radius:10px; margin-bottom:12px; }
+  .rep .simulator h4{ color:#06b6d4; font-size:11.5px; text-transform:uppercase; letter-spacing:.5px; margin:0 0 4px; font-weight:600; }
+  .rep .simulator .hint{ color:#8a93a3; font-size:11px; margin:0 0 8px; }
+  .rep .sim-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px 14px; }
+  .rep .sim-grid label{ display:block; font-size:10px; color:#8a93a3; margin-bottom:3px; text-transform:uppercase; letter-spacing:.5px; }
+  .rep .vrow{ display:flex; align-items:center; gap:8px; }
+  .rep .vrow input[type=range]{ flex:1; accent-color:#3b82f6; min-width:0; }
+  .rep .vval{ min-width:44px; text-align:right; font-variant-numeric:tabular-nums; font-size:12px; color:#06b6d4; }
+  .rep .sim-out{ margin-top:10px; display:flex; gap:18px; flex-wrap:wrap; align-items:center; }
+  .rep .sim-out .lbl{ color:#8a93a3; font-size:10.5px; }
+  .rep .sim-out b{ font-size:14px; font-variant-numeric:tabular-nums; }
+  .rep .r-btn{ background:transparent; border:1px solid #1f2730; color:#8a93a3; border-radius:6px;
+    padding:5px 12px; font-size:11.5px; cursor:pointer; font-family:inherit; }
+  .rep .r-btn:hover{ color:#e8ecf2; }
+
+  .rep .controls{ display:flex; gap:7px; flex-wrap:wrap; margin-bottom:10px; align-items:center; }
+  .rep .controls input, .rep .controls select{ background:#11151b; color:#e8ecf2; border:1px solid #1f2730;
+    border-radius:6px; padding:6px 9px; font-size:12px; font-family:inherit; }
+  .rep .controls input{ min-width:150px; }
+  .rep .controls .cnt{ color:#8a93a3; font-size:11.5px; }
+
+  .rep .tbl-scroll{ overflow:auto; max-height:380px; border-radius:6px; }
+  .rep table{ width:100%; border-collapse:collapse; font-size:12px; min-width:740px; }
+  .rep th{ text-align:left; padding:7px 8px; color:#8a93a3; font-weight:500; border-bottom:1px solid #1f2730;
+    text-transform:uppercase; font-size:10px; letter-spacing:.4px; position:sticky; top:0; background:#13181f; z-index:1; }
+  .rep td{ padding:6px 8px; border-bottom:1px solid #1a1f27; }
+  .rep tbody tr.sel-row{ cursor:pointer; }
+  .rep tbody tr.sel-row:hover td{ background:#11151b; }
+  .rep tbody tr.sel-row:focus-visible{ outline:2px solid #3b82f6; outline-offset:-2px; }
+  .rep .num{ text-align:right; font-variant-numeric:tabular-nums; }
+  .rep .pos{ color:#10b981; } .rep .neg{ color:#ef4444; } .rep .warnc{ color:#f59e0b; }
+  .rep .tag-A{ background:#10b98133; color:#10b981; padding:2px 7px; border-radius:4px; font-size:10px; font-weight:600; }
+  .rep .tag-B{ background:#f59e0b33; color:#f59e0b; padding:2px 7px; border-radius:4px; font-size:10px; font-weight:600; }
+  .rep .tag-C{ background:#ef444433; color:#ef4444; padding:2px 7px; border-radius:4px; font-size:10px; font-weight:600; }
+  .rep .muted{ color:#8a93a3; }
+
+  .rep .plan-head{ display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:8px; margin-bottom:10px; }
+  .rep .plan-head .item{ background:#181d25; padding:8px 10px; border-radius:6px; }
+  .rep .plan-head .item .l{ font-size:9.5px; color:#8a93a3; text-transform:uppercase; letter-spacing:.4px; }
+  .rep .plan-head .item .v{ font-size:14.5px; font-weight:600; margin-top:2px; font-variant-numeric:tabular-nums; }
+  .rep .plan-tbl{ min-width:0 !important; }
+  .rep .alert-red{ background:#ef444415; border:1px solid #ef444444; border-left:3px solid #ef4444;
+    padding:8px 12px; border-radius:6px; margin-top:10px; font-size:12px; }
+  .rep .alert-warn{ background:#f59e0b15; border:1px solid #f59e0b44; border-left:3px solid #f59e0b;
+    padding:8px 12px; border-radius:6px; margin-top:10px; font-size:12px; color:#f5d089; }
+
+  .rep .ia-card{ background:linear-gradient(135deg,#0c4a6e22,#86198f22); border:1px solid #334155;
+    padding:16px 18px; border-radius:10px; margin-bottom:12px; }
+  .rep .ia-card h4{ font-size:11.5px; text-transform:uppercase; color:#06b6d4; letter-spacing:.5px; margin:0 0 10px; font-weight:600; }
+  .rep .ia-card p{ margin:0 0 10px; font-size:12.5px; }
+  .rep .ia-card ul{ margin:0; padding-left:18px; display:grid; gap:7px; font-size:12.5px; }
+  .rep .ia-card li::marker{ color:#06b6d4; }
+  .rep pre.val{ background:#11151b; padding:12px; border-radius:6px; font-size:11px; overflow-x:auto;
+    white-space:pre; color:#8a93a3; margin:0; line-height:1.7; font-family:Consolas,monospace; }
+  .rep pre.val .ok{ color:#10b981; } .rep pre.val .av{ color:#f59e0b; }
+
+  .rep .r-foot{ padding:10px 16px; text-align:center; color:#5c6573; font-size:10.5px; border-top:1px solid #1f2730; }
+  .demo-note{ font-size:.8rem; color:var(--muted); margin-top:10px; max-width:70ch; }
+
+  footer{ border-top:1px solid var(--line); padding:40px 0 60px; color:var(--muted); font-size:.88rem; }
+  .contato a{ color:var(--accent); text-decoration:none; }
+  .nota-rascunho{ font-family:var(--mono); margin-top:26px; font-size:.66rem; letter-spacing:.06em; opacity:.7; }
+
+  /* destaque antes da demo */
+  .destaque{ background:var(--card); border:1px solid var(--line); border-left:3px solid var(--accent);
+    border-radius:0 6px 6px 0; padding:14px 18px; margin:16px 0 4px; font-size:.95rem; max-width:66ch; }
+  .destaque b{ color:var(--accent); }
+
+  /* ---- celular ---- */
+  @media (max-width:640px){
+    .wrap{ padding:0 16px; }
+    html{ scroll-padding-top:104px; }
+    .top-inner{ flex-wrap:wrap; row-gap:6px; padding-top:10px; padding-bottom:10px; }
+    nav{ order:3; width:100%; gap:18px; overflow-x:auto; white-space:nowrap; padding-bottom:2px; scrollbar-width:none; }
+    nav a{ flex:none; }
+    .hero{ padding:36px 0 44px; }
+    .hero p.sub{ font-size:1rem; }
+    a.cta{ display:block; text-align:center; }
+    a.cta.ghost{ margin-left:0; margin-top:10px; }
+    .camadas{ margin-top:36px; }
+    section{ padding:40px 0; }
+    .manifesto{ padding:56px 0; }
+    .passo{ grid-template-columns:40px 1fr; gap:12px; padding:18px 0; }
+    .case{ padding:20px 18px; }
+    .browser .b-url{ font-size:10px; }
+    .rep{ font-size:12.5px; }
+    .rep .r-head{ padding:12px 14px; }
+    .rep .r-meta{ text-align:left; }
+    .rep .r-tabs{ flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:thin; }
+    .rep .r-pane{ padding:10px 10px 12px; }
+    .rep .kpi-row{ grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); }
+    .rep .kpi .v{ font-size:16px; }
+    .rep .chart-scroll svg{ min-width:520px; }
+    .rep .hb{ grid-template-columns:minmax(88px,120px) 1fr 60px; font-size:11px; }
+    .rep .controls input{ min-width:0; flex:1 1 140px; }
+    .rep .tbl-scroll{ max-height:330px; }
+    .demo-note{ font-size:.78rem; }
+  }
+</style>
+
+<header class="topbar">
+<div class="wrap top-inner">
+  <a href="#topo" class="logo-lockup" aria-label="Pattrono, voltar ao topo">
+    <span class="mark3b" aria-hidden="true"><span></span></span>
+    <span class="logo-word">Pattrono</span>
+  </a>
+  <nav aria-label="Seções">
+    <a href="#demo">CostVision</a>
+    <a href="#metodo">Como funciona</a>
+    <a href="#quem">Quem somos</a>
+  </nav>
+  <a class="cta mini" href="#contato">Agendar diagnóstico</a>
+</div>
+</header>
+<div class="wrap" id="topo">
+
+<main>
+<div class="hero">
+  <div class="eyebrow">Dados de custos para indústria</div>
+  <h1>Quanto custa, de verdade, cada produto que sai da sua fábrica?</h1>
+  <p class="sub">ERP caro, controller ocupado, e mesmo assim a margem por item é um mistério? O <b>CostVision</b> entrega, todo mês, o custo real e a margem de cada produto, calculados dos seus próprios dados: ERP, folha, energia e engenharia. Nós rodamos tudo, você não instala nada.</p>
+  <a class="cta" href="#contato">Agendar conversa de diagnóstico</a>
+  <a class="cta ghost" href="#demo">Ver o sistema funcionando</a>
+  <div class="hero-proof">
+    <span class="hp"><span class="ck">&#10003;</span><b>Fechamento em dias</b>, não semanas</span>
+    <span class="hp"><span class="ck">&#10003;</span><b>Conta aberta</b>: seu time confere na calculadora</span>
+    <span class="hp"><span class="ck">&#10003;</span><b>NDA</b> antes de qualquer dado</span>
+  </div>
+</div>
+
+<section id="demo" class="band">
+  <div class="kicker">Nosso sistema</div>
+  <h2>Conheça o CostVision</h2>
+  <p class="lead">Construímos nosso próprio sistema de custeio: o <b>CostVision</b>. Este é ele, com dados de demonstração. Navegue pelas abas e clique num produto para ver a conta aberta.</p>
+  <div class="destaque">O rateio médio esconde o item que dá prejuízo. Nesta amostra, <b>1 dos 12 produtos vende abaixo do custo</b>: R$ 25 mil por mês, quase R$ 300 mil por ano, queimados sem aparecer no DRE. Na sua fábrica, quantos seriam?</div>
+  <span class="fict">Ambiente de demonstração · dados fictícios</span>
+
+  <div class="browser">
+    <div class="b-bar">
+      <div class="b-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="b-url">&#128274; <b>app.costvision.com.br</b>/industria-exemplo/fechamento/2026-06</div>
+    </div>
+  <div class="rep" id="rep">
+    <div class="r-head">
+      <div>
+        <div class="cv-mark"><span class="cv-dot"></span><span class="cv-n">Cost</span><span class="cv-v">Vision</span><span class="cv-tag">sistema Pattrono</span></div>
+        <div class="r-title">Indústria Exemplo <span class="dim">| Grupo Demo</span></div>
+        <div class="r-sub">Relatório Gerencial — Junho 2026 · Valores sem impostos</div>
+        <div class="r-tags">
+          <span class="rtag ok">Fechamento validado</span>
+          <span class="rtag info">Taxas por setor</span>
+          <span class="rtag info">6 reajustes de material</span>
+          <span class="rtag warn">1 item abaixo do custo</span>
+        </div>
+      </div>
+      <div class="r-meta">
+        <b>CostVision</b> · Pattrono<br>
+        Mês: <b>Junho 2026</b><br>
+        Gerado: <b>01/07/2026 08:12</b><br>
+        <span>Taxa: por setor · CF rateado por hora</span>
+      </div>
+    </div>
+
+    <div class="r-tabs" role="tablist" aria-label="Módulos do relatório">
+      <button class="r-tab active" data-pane="rp1" role="tab" aria-selected="true">01 · Margem</button>
+      <button class="r-tab" data-pane="rp2" role="tab" aria-selected="false">02 · Vendas</button>
+      <button class="r-tab" data-pane="rp3" role="tab" aria-selected="false">03 · Produtos</button>
+      <button class="r-tab" data-pane="rp4" role="tab" aria-selected="false">04 · Reajustes</button>
+      <button class="r-tab" data-pane="rp5" role="tab" aria-selected="false">05 · Custo Fixo</button>
+      <button class="r-tab" data-pane="rp6" role="tab" aria-selected="false">06 · Planilha</button>
+      <button class="r-tab" data-pane="rp7" role="tab" aria-selected="false">Consultor IA</button>
+    </div>
+
+    <!-- 01 MARGEM -->
+    <div class="r-pane active" id="rp1">
+      <div class="kpi-row" id="repKpis"></div>
+      <div class="r-card">
+        <h4>Evolução mensal — Faturamento, custos e resultado</h4>
+        <div class="chart-scroll"><div id="repChart"></div></div>
+        <div class="r-legend">
+          <span class="it"><span class="sw" style="background:#3b82f6"></span>Custo material</span>
+          <span class="it"><span class="sw" style="background:#64748b"></span>Processo + custo fixo</span>
+          <span class="it"><span class="sw" style="background:#10b981"></span>Resultado</span>
+          <span class="it"><span class="sw" style="background:#ef4444"></span>Prejuízo</span>
+          <span class="it"><span class="ln"></span>Faturamento</span>
+        </div>
+      </div>
+      <div class="simulator">
+        <h4>Simulador de cenário</h4>
+        <p class="hint">Ajuste os drivers e veja o impacto no resultado e no gráfico. Experimente derrubar o preço de venda.</p>
+        <div class="sim-grid">
+          <div><label for="sVol">Volume (%)</label><div class="vrow"><input type="range" id="sVol" min="-50" max="50" value="0"><span class="vval" id="sVolV">0%</span></div></div>
+          <div><label for="sPV">Preço de venda (%)</label><div class="vrow"><input type="range" id="sPV" min="-30" max="30" value="0"><span class="vval" id="sPVV">0%</span></div></div>
+          <div><label for="sMP">Custo material (%)</label><div class="vrow"><input type="range" id="sMP" min="-30" max="30" value="0"><span class="vval" id="sMPV">0%</span></div></div>
+          <div><label for="sCF">Custo fixo (%)</label><div class="vrow"><input type="range" id="sCF" min="-30" max="30" value="0"><span class="vval" id="sCFV">0%</span></div></div>
+        </div>
+        <div class="sim-out">
+          <span><span class="lbl">Fat. simulado: </span><b id="soFat" style="color:#06b6d4"></b></span>
+          <span><span class="lbl">Resultado: </span><b id="soRes"></b></span>
+          <span><span class="lbl">%: </span><b id="soPct"></b></span>
+          <button class="r-btn" id="soReset" type="button">Resetar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 VENDAS -->
+    <div class="r-pane" id="rp2">
+      <div class="kpi-row" id="vKpis"></div>
+      <div class="grid2r">
+        <div class="r-card">
+          <h4>Mix de faturamento por linha</h4>
+          <div class="donut-wrap">
+            <div id="vDonut"></div>
+            <div class="donut-leg" id="vDonutLeg"></div>
+          </div>
+        </div>
+        <div class="r-card">
+          <h4>Top clientes por faturamento</h4>
+          <div id="vCliBars"></div>
+        </div>
+      </div>
+      <div class="r-card">
+        <h4>Detalhamento por cliente</h4>
+        <div class="tbl-scroll">
+          <table><thead><tr><th>#</th><th>Cliente</th><th class="num">Volume</th><th class="num">Faturamento</th><th class="num">Ticket médio</th><th class="num">% do fat.</th></tr></thead>
+          <tbody id="vCliTbody"></tbody></table>
+        </div>
+        <div class="alert-warn" id="vConc"></div>
+      </div>
+    </div>
+
+    <!-- 03 PRODUTOS -->
+    <div class="r-pane" id="rp3">
+      <div class="controls">
+        <input id="rpBusca" placeholder="Buscar produto..." aria-label="Buscar produto">
+        <select id="rpFiltro" aria-label="Filtrar por margem">
+          <option value="">Todas</option>
+          <option value="lucro">Margem positiva</option>
+          <option value="prej">Margem negativa</option>
+        </select>
+        <select id="rpABC" aria-label="Filtrar por curva ABC">
+          <option value="">ABC: todas</option><option value="A">A</option><option value="B">B</option><option value="C">C</option>
+        </select>
+        <select id="rpOrdem" aria-label="Ordenar por">
+          <option value="fat">Ordem: Faturamento</option>
+          <option value="mgtot">Margem total R$</option>
+          <option value="mgpct">Margem %</option>
+          <option value="vol">Volume</option>
+        </select>
+        <select id="rpDir" aria-label="Direção da ordenação">
+          <option value="desc">Maior → menor</option><option value="asc">Menor → maior</option>
+        </select>
+        <span class="cnt" id="rpCnt"></span>
+      </div>
+      <div class="tbl-scroll">
+        <table id="rpTbl">
+          <thead><tr>
+            <th>ABC</th><th>Ref</th><th>Descrição</th><th>Linha</th>
+            <th class="num">Vol</th><th class="num">Preço</th><th class="num">Custo un</th>
+            <th class="num">Fat</th><th class="num">Margem un</th><th class="num">%Mg</th><th class="num">Margem total</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="muted" style="font-size:11px;margin:8px 2px 0">Amostra de 12 produtos. Clique numa linha para abrir a planilha de custos do item. No relatório real, todos os itens faturados aparecem aqui, com filtro por cliente e representante.</p>
+    </div>
+
+    <!-- 04 REAJUSTES -->
+    <div class="r-pane" id="rp4">
+      <div class="kpi-row" id="reajKpis"></div>
+      <div class="r-card">
+        <h4>Variação de preço dos materiais — junho vs maio</h4>
+        <p class="sub-note">Mesmo material, mesmo fornecedor, a último preço real de compra. Alta acima de 10% em vermelho, alta até 10% em amarelo, queda em verde.</p>
+        <div class="tbl-scroll">
+          <table><thead><tr><th>Cód</th><th>Material</th><th>Fornecedor</th>
+            <th class="num">Preço maio</th><th class="num">Preço junho</th><th class="num">Variação</th></tr></thead>
+          <tbody id="reajMatTbody"></tbody></table>
+        </div>
+      </div>
+      <div class="r-card">
+        <h4>Itens afetados e preço sugerido</h4>
+        <p class="sub-note">Uma linha por produto afetado. Preço sugerido = preço atual + aumento de custo: repassa o reajuste e preserva a margem.</p>
+        <div class="tbl-scroll">
+          <table><thead><tr><th>Ref</th><th>Descrição</th><th>Material reajustado</th>
+            <th class="num">Aumento un</th><th class="num">Preço atual</th><th class="num">Preço sugerido</th>
+            <th class="num">% sugerido</th><th class="num">Vol mês</th><th class="num">Impacto/mês</th></tr></thead>
+          <tbody id="reajItTbody"></tbody></table>
+        </div>
+        <div class="alert-red">&#9888; <b>TU-450:</b> o repasse sugerido cobre só o reajuste novo do latão. O item já vendia abaixo do custo antes da alta e precisa de renegociação própria (ver Planilha).</div>
+      </div>
+    </div>
+
+    <!-- 05 CUSTO FIXO -->
+    <div class="r-pane" id="rp5">
+      <div class="kpi-row" id="cfKpis"></div>
+      <div class="grid2r">
+        <div class="r-card">
+          <h4>Composição da estrutura por categoria</h4>
+          <div id="cfBars"></div>
+        </div>
+        <div class="r-card">
+          <h4>Tabela por categoria</h4>
+          <div class="tbl-scroll">
+            <table class="plan-tbl"><thead><tr><th>Categoria</th><th class="num">Valor</th><th class="num">%</th></tr></thead>
+            <tbody id="cfTbody"></tbody></table>
+          </div>
+        </div>
+      </div>
+      <div class="r-card">
+        <h4>Como a estrutura chega em cada peça</h4>
+        <p style="font-size:12.5px;margin:0">A folha e a energia viram <b>taxas horárias por setor</b> (R$ 42 a R$ 90/h nesta amostra), aplicadas ao tempo de processo de cada item. O restante da estrutura vira <b>custo fixo rateado por hora produtiva</b> (R$ 36,00/h). Resultado: cada peça carrega exatamente a fatia de estrutura que consome, e a soma de todas as peças fecha com o total do mês, sem sobra e sem mágica.</p>
+      </div>
+    </div>
+
+    <!-- 06 PLANILHA -->
+    <div class="r-pane" id="rp6">
+      <div class="controls">
+        <label class="muted" for="rpSel" style="font-size:11.5px">Produto:</label>
+        <select id="rpSel" style="min-width:260px" aria-label="Escolher produto"></select>
+      </div>
+      <div id="rpPlan"></div>
+    </div>
+
+    <!-- CONSULTOR IA -->
+    <div class="r-pane" id="rp7">
+      <div class="ia-card">
+        <h4>Resumo executivo — Junho 2026</h4>
+        <p>Melhor mês do semestre: resultado de <b class="pos">R$ 701 mil (20,2% do faturamento)</b>, puxado por volume recorde e mix favorável de injetados. Quatro pontos pedem decisão:</p>
+        <ul>
+          <li><b>TU-450 vende abaixo do custo (−8,7%).</b> Mesmo repassando a alta do latão, o item segue no vermelho: R$ 25 mil de prejuízo no mês. Renegociar preço ou revisar o processo de usinagem, que usa a taxa mais cara da fábrica (R$ 90/h).</li>
+          <li><b>Reajustes de material custam R$ 40 mil/mês se não repassados.</b> Aço, latão e PA6 subiram. A tabela de preço sugerido, item a item, está pronta no módulo Reajustes.</li>
+          <li><b>Top 3 clientes concentram 49% do faturamento.</b> Concentração alta para o porte: qualquer perda dói. Vale plano ativo para a carteira média.</li>
+          <li><b>A curva A tem 8 itens e 79% do faturamento.</b> Priorizar a revisão de tempos de engenharia desses 8 antes dos demais: é onde cada minuto errado custa mais caro.</li>
+        </ul>
+      </div>
+      <div class="r-card">
+        <h4>Validações do mês</h4>
+        <pre class="val"><span class="ok">[OK]</span>    Faturamento ERP x relatorio: R$ 3.476.143,50 · diferenca R$ 0,00
+<span class="ok">[OK]</span>    12 de 12 itens com engenharia completa (materiais + tempos)
+<span class="ok">[OK]</span>    Estrutura do mes conciliada com contas a pagar e folha
+<span class="ok">[OK]</span>    Rateio de custo fixo: soma por peca fecha com o total (R$ 508.883)
+<span class="av">[AVISO]</span> 1 item com margem negativa: TU-450 (-8,7%)
+<span class="av">[AVISO]</span> 6 materiais com alta de preco vs maio — ver modulo Reajustes</pre>
+      </div>
+    </div>
+
+    <div class="r-foot">CostVision — sistema de custeio da Pattrono · Indústria Exemplo · Junho 2026 · Valores sem impostos · Relatório gerado e validado automaticamente</div>
+  </div>
+  </div>
+  <p class="demo-note">Demonstração com dados fictícios de 12 produtos. Todos os números fecham entre si: o faturamento é a soma dos itens e o rateio bate com o total do mês, centavo a centavo. Confira na calculadora. Na versão real, taxas e rateio saem da folha, da energia e da estrutura da sua empresa.</p>
+</section>
+
+<section id="metodo">
+  <div class="kicker">Como funciona</div>
+  <h2>Você não instala nada. Funciona assim:</h2>
+  <div class="passos">
+    <div class="passo">
+      <div class="n">1</div>
+      <div>
+        <h3>Implantação</h3>
+        <p>Levantamos os dados na origem (ERP, folha, energia, engenharia) e validamos os primeiros fechamentos com o seu time. Escopo e valor fechados antes de começar.</p>
+      </div>
+    </div>
+    <div class="passo">
+      <div class="n">2</div>
+      <div>
+        <h3>Todo mês, na sua mesa</h3>
+        <p>A margem real de cada produto, os itens vendendo abaixo do custo, o repasse sugerido quando material sobe e a planilha de conferência com a conta aberta.</p>
+      </div>
+    </div>
+    <div class="passo">
+      <div class="n">3</div>
+      <div>
+        <h3>Decisão</h3>
+        <p>Preço, reajuste e mix com o número na mão: você senta com seu maior cliente sabendo exatamente a margem de cada item que ele compra. Assinatura mensal, sem fidelidade: cancela quando quiser e a base fica com você.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="confianca">
+  <div class="kicker">Por que confiar</div>
+  <h2>O número sai auditável, ou não sai</h2>
+  <div class="hero-proof" style="margin-top:20px; flex-direction:column; gap:10px">
+    <span class="hp"><span class="ck">&#10003;</span><b>Conciliado com o ERP</b>: se a diferença não é zero, o relatório não sai</span>
+    <span class="hp"><span class="ck">&#10003;</span><b>Conta aberta</b>: seu time refaz qualquer número na calculadora</span>
+    <span class="hp"><span class="ck">&#10003;</span><b>Mesma entrada, mesmo número</b>: cálculo testado contra um mês de referência</span>
+    <span class="hp"><span class="ck">&#10003;</span><b>NDA antes de qualquer dado</b>: base e histórico são seus, sem caixa-preta</span>
+  </div>
+</section>
+
+<section id="pratica">
+  <div class="kicker">Na prática</div>
+  <h2>Feito para o chão de fábrica real</h2>
+  <div class="case">
+    <p class="quem">Grupo industrial · autopeças e plásticos · duas unidades</p>
+    <p>Centenas de produtos ativos, dados espalhados entre ERP, engenharia e folha. Implantamos o CostVision com taxa horária por setor e máquina e matéria-prima a último preço real de compra.</p>
+    <p>Já no primeiro fechamento, o sistema identificou <b>[N] itens vendendo abaixo do custo</b>, hoje reprecificados. O fechamento de custos, que levava semanas, sai em <b>poucos dias</b>, e a mesa de reajuste recebe a memória de cálculo completa, item a item.</p>
+  </div>
+  <p class="lead" style="margin-top:18px">Funciona melhor em produção seriada (metal, plástico, borracha, elétrico), com muitos itens ativos e ERP em uso. Fábrica sob encomenda? Fale com a gente antes.</p>
+</section>
+
+<section id="quem">
+  <div class="kicker">Quem somos</div>
+  <h2>Dois sócios de ofício, dentro da sua operação</h2>
+  <p class="lead">Implantamos, rodamos junto e ficamos até a rotina andar sozinha.</p>
+  <div class="duo">
+    <div class="card"><div class="mark"></div>
+      <h3>Gustavo Fuster</h3>
+      <p>Especialista em custos industriais e estruturação de dados. Constrói o motor: integração, custeio, taxas e fechamento mensal.</p>
+    </div>
+    <div class="card"><div class="mark"></div>
+      <h3>Luis Contesini</h3>
+      <p>Especialista em operação e processos industriais. Garante que o número da base é o número do chão de fábrica.</p>
+    </div>
+  </div>
+</section>
+
+<section id="contato" style="border-top:1px solid var(--line)">
+  <div class="kicker">Contato</div>
+  <h2>Conversa de diagnóstico: 30 minutos, sem compromisso</h2>
+  <p class="lead">Traga uma dúvida real de custo ou preço. Sem mandar dado nenhum antes: primeiro conversamos, e você sai com um diagnóstico honesto. Se fizer sentido seguir, assinamos NDA antes de qualquer troca de dados.</p>
+  <p style="margin-top:26px">
+    <a class="cta" href="https://wa.me/5511956508818?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20Pattrono%20e%20quero%20agendar%20uma%20conversa%20de%20diagn%C3%B3stico.">Agendar pelo WhatsApp</a>
+    <a class="cta ghost" href="mailto:gustavofuster@smartcostbrasil.com">gustavofuster@smartcostbrasil.com</a>
+    <a class="cta ghost" href="mailto:luiscontesini@smartcostbrasil.com">luiscontesini@smartcostbrasil.com</a>
+  </p>
+</section>
+</main>
+
+<footer>
+  <div class="logo-lockup" style="margin-bottom:12px">
+    <span class="mark3b" aria-hidden="true"><span></span></span>
+    <div>
+      <div class="logo-word">Pattrono</div>
+      <div class="logo-desc">Gestão Estratégica</div>
+    </div>
+  </div>
+  <div style="margin:6px 0 10px; max-width:60ch">"Tratamos os números da sua empresa com <b style="color:var(--accent)">zelo de dono</b>: com método, com prova e com a conta aberta."</div>
+  <div>Dados de custos para indústria · CostVision é o sistema de custeio da Pattrono · [Cidade], SP</div>
+  <div class="contato"><a href="mailto:gustavofuster@smartcostbrasil.com">gustavofuster@smartcostbrasil.com</a> · <a href="mailto:luiscontesini@smartcostbrasil.com">luiscontesini@smartcostbrasil.com</a> · WhatsApp (11) 95650-8818</div>
+  <div class="nota-rascunho">Rascunho interno v16 · nome e domínio pendentes do parecer INPI · número do caso [N] e cidade a preencher · caso descrito de forma genérica até autorização do cliente</div>
+</footer>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var brl = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
+  function brlK(v){ return 'R$ ' + Math.round(v).toLocaleString('pt-BR'); }
+  function n2(v){ return v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function nI(v){ return Math.round(v).toLocaleString('pt-BR'); }
+  function pct1(v){ return v.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'%'; }
+
+  var FIXO_H = 36.00;
+  var PRODS = [
+    {id:'SP-104', desc:'Suporte estampado SP-104', linha:'Estampados', vol:8200,  preco:12.80, mpDesc:'Aço SAE 1020 · 0,70 kg × R$ 7,00/kg', mp:4.90, proc:[['Estamparia',66,2.4],['Solda',72,0.5]]},
+    {id:'CH-310', desc:'Chicote elétrico CH-310', linha:'Elétricos', vol:3100,  preco:28.50, mpDesc:'Cabos, terminais e conectores', mp:14.20, proc:[['Montagem',48,6.0],['Teste elétrico',54,1.5]]},
+    {id:'BJ-220', desc:'Bucha injetada BJ-220', linha:'Injetados', vol:24500, preco:3.45,  mpDesc:'PA6 · 0,045 kg × R$ 24,00/kg', mp:1.08, proc:[['Injeção',84,0.75]]},
+    {id:'AB-118', desc:'Abraçadeira AB-118', linha:'Estampados', vol:41000, preco:1.95,  mpDesc:'Fita de aço · 0,08 kg × R$ 7,75/kg', mp:0.62, proc:[['Corte e dobra',60,0.6]]},
+    {id:'EP-560', desc:'Engrenagem injetada EP-560', linha:'Injetados', vol:15200, preco:4.10, mpDesc:'POM · 0,038 kg × R$ 29,00/kg', mp:1.10, proc:[['Injeção',84,0.9]]},
+    {id:'DF-905', desc:'Defletor plástico DF-905', linha:'Injetados', vol:6400,  preco:9.60,  mpDesc:'PP · 0,26 kg × R$ 12,00/kg', mp:3.12, proc:[['Injeção',84,1.8]]},
+    {id:'TU-450', desc:'Terminal usinado TU-450', linha:'Usinados', vol:9800,  preco:6.20,  mpDesc:'Latão · 0,08 kg × R$ 37,00/kg', mp:2.96, proc:[['Usinagem CNC',90,1.8]]},
+    {id:'MB-208', desc:'Mancal borracha-metal MB-208', linha:'Borracha', vol:5600, preco:7.90, mpDesc:'NBR + inserto de aço', mp:3.10, proc:[['Vulcanização',78,1.6]]},
+    {id:'FL-089', desc:'Flange usinada FL-089', linha:'Usinados', vol:2400, preco:18.40, mpDesc:'Alumínio 6061 · 0,21 kg × R$ 32,00/kg', mp:6.72, proc:[['Usinagem CNC',90,4.2]]},
+    {id:'AV-203', desc:'Anel de vedação AV-203', linha:'Borracha', vol:18600, preco:2.10,  mpDesc:'NBR · 0,010 kg × R$ 38,00/kg', mp:0.38, proc:[['Vulcanização',78,0.45]]},
+    {id:'PR-412', desc:'Presilha plástica PR-412', linha:'Injetados', vol:52000, preco:0.72, mpDesc:'PP · 0,008 kg × R$ 12,00/kg', mp:0.10, proc:[['Injeção',84,0.25]]},
+    {id:'KR-77',  desc:'Kit reparo KR-77', linha:'Kits', vol:720,   preco:45.00, mpDesc:'Componentes do kit (7 itens)', mp:21.40, proc:[['Montagem',48,8.0],['Embalagem',42,2.0]]}
+  ];
+  // amostra na escala de uma fábrica de ~R$ 3,5 mi/mês
+  var ESCALA = 4.7;
+  PRODS.forEach(function(p){ p.vol = Math.round(p.vol*ESCALA); });
+  PRODS.forEach(function(p){
+    p.procV = p.proc.reduce(function(s,l){ return s + l[1]*l[2]/60; },0);
+    p.minTot = p.proc.reduce(function(s,l){ return s + l[2]; },0);
+    p.fixo = FIXO_H*p.minTot/60;
+    p.custo = p.mp + p.procV + p.fixo;
+    p.mg = p.preco - p.custo;
+    p.mgPct = p.mg/p.preco*100;
+    p.fat = p.preco*p.vol;
+  });
+  // curva ABC pelo faturamento acumulado (A até 80%, B até 95%)
+  var TOT_FAT = PRODS.reduce(function(s,p){return s+p.fat;},0);
+  (function(){
+    var ord = PRODS.slice().sort(function(a,b){return b.fat-a.fat;});
+    var cum = 0;
+    ord.forEach(function(p){ cum += p.fat; p.abc = cum/TOT_FAT<=0.80?'A':(cum/TOT_FAT<=0.95?'B':'C'); });
+  })();
+  var TOT_VOL = PRODS.reduce(function(s,p){return s+p.vol;},0);
+  var TOT_MP = PRODS.reduce(function(s,p){return s+p.mp*p.vol;},0);
+  var TOT_CF = PRODS.reduce(function(s,p){return s+(p.procV+p.fixo)*p.vol;},0);
+  var TOT_PROC = PRODS.reduce(function(s,p){return s+p.procV*p.vol;},0);
+  var TOT_FIXO = TOT_CF-TOT_PROC;
+  var TOT_RES = TOT_FAT-TOT_MP-TOT_CF;
+  var TOT_HORAS = PRODS.reduce(function(s,p){return s+p.minTot*p.vol;},0)/60;
+
+  // série mensal fictícia; junho calculado da própria amostra
+  var MESES = [
+    {m:'jan/26', fat:668400, mp:242100, cf:321900},
+    {m:'fev/26', fat:621300, mp:228400, cf:323600},
+    {m:'mar/26', fat:694800, mp:251200, cf:322800},
+    {m:'abr/26', fat:655200, mp:237900, cf:325700},
+    {m:'mai/26', fat:716100, mp:258300, cf:324900},
+    {m:'jun/26', fat:TOT_FAT, mp:TOT_MP, cf:TOT_CF}
+  ];
+  MESES.forEach(function(m){ if(m.fat!==TOT_FAT){ m.fat*=ESCALA; m.mp*=ESCALA; m.cf*=ESCALA; } });
+  var JUN = MESES[MESES.length-1];
+
+  // ---- abas ----
+  var tabs = document.querySelectorAll('#rep .r-tab');
+  function abrirAba(id){
+    tabs.forEach(function(t){
+      var on = t.dataset.pane===id;
+      t.classList.toggle('active',on);
+      t.setAttribute('aria-selected', on?'true':'false');
+    });
+    document.querySelectorAll('#rep .r-pane').forEach(function(pn){
+      pn.classList.toggle('active', pn.id===id);
+    });
+  }
+  tabs.forEach(function(t){ t.addEventListener('click',function(){ abrirAba(t.dataset.pane); }); });
+
+  function kpiHTML(lista){
+    return lista.map(function(k){
+      return '<div class="kpi '+(k.cls||'')+'"><div class="l">'+k.l+'</div><div class="v">'+k.v+'</div>'+
+        (k.s?'<div class="s">'+k.s+'</div>':'')+
+        (k.d?'<div class="d '+k.dc+'">'+k.d+'</div>':'')+'</div>';
+    }).join('');
+  }
+
+  // ---- 01 Margem: KPIs ----
+  var deltaFat = (JUN.fat/MESES[4].fat-1)*100;
+  document.getElementById('repKpis').innerHTML = kpiHTML([
+    {l:'Faturamento', v:brlK(JUN.fat), cls:'blue', d:'+'+pct1(deltaFat)+' vs mês ant.', dc:'pos'},
+    {l:'Volume', v:nI(TOT_VOL), s:'unid.', d:'+2,4% vs mês ant.', dc:'pos'},
+    {l:'Custo material', v:brlK(TOT_MP), s:pct1(TOT_MP/JUN.fat*100)+' do fat.'},
+    {l:'Processo + custo fixo', v:brlK(TOT_CF), s:pct1(TOT_CF/JUN.fat*100)+' do fat.', cls:'yellow'},
+    {l:'Resultado', v:brlK(TOT_RES), s:pct1(TOT_RES/JUN.fat*100)+' do fat.', cls:'green', d:'+1,6 pp vs mês ant.', dc:'pos'},
+    {l:'Ticket médio', v:brl.format(JUN.fat/TOT_VOL)}
+  ]);
+
+  // ---- gráfico SVG (mesma geometria do relatório real) ----
+  var sVol=document.getElementById('sVol'), sPV=document.getElementById('sPV'),
+      sMP=document.getElementById('sMP'), sCF=document.getElementById('sCF');
+  function fatores(){
+    return { v:+sVol.value/100, p:+sPV.value/100, m:+sMP.value/100, c:+sCF.value/100 };
+  }
+  function serieSimulada(){
+    var f=fatores();
+    return MESES.map(function(x){
+      var fat = x.fat*(1+f.v)*(1+f.p);
+      var mp  = x.mp*(1+f.v)*(1+f.m);
+      var cf  = x.cf*(1+f.c);
+      return { m:x.m, fat:fat, mp:mp, cf:cf, res:fat-mp-cf };
+    });
+  }
+  function desenhaGrafico(){
+    var cm = serieSimulada();
+    var W=720,H=290, L=58,R=14,T=26,B=28, pw=W-L-R, ph=H-T-B;
+    var maxV = 0;
+    cm.forEach(function(x){ maxV = Math.max(maxV, x.fat, x.mp+x.cf); });
+    var yMax = Math.ceil(maxV/200000)*200000 || 200000;
+    function Y(v){ return T + ph - v/yMax*ph; }
+    var slot = pw/cm.length, bw = Math.min(48, slot*0.46);
+    var s='';
+    for(var g=0; g<=4; g++){
+      var gv=yMax*g/4, gy=Y(gv);
+      s+='<line x1="'+L+'" y1="'+gy+'" x2="'+(W-R)+'" y2="'+gy+'" stroke="#1f2730" stroke-width="1"/>';
+      var gvl = !gv ? '0' : (gv>=1e6 ? (gv/1e6).toLocaleString('pt-BR',{maximumFractionDigits:1})+' mi' : Math.round(gv/1000)+' mil');
+      s+='<text x="'+(L-8)+'" y="'+(gy+3.5)+'" text-anchor="end" font-size="10" fill="#5c6573">'+gvl+'</text>';
+    }
+    var pts=[];
+    cm.forEach(function(x,i){
+      var cx = L+slot*i+slot/2, x0 = cx-bw/2;
+      var mpSeg = Math.min(x.mp, x.fat);
+      var cfSeg = Math.max(0, Math.min(x.cf, x.fat-x.mp));
+      var prej  = Math.max(0, x.mp+x.cf-x.fat);
+      var lucro = Math.max(0, x.fat-x.mp-x.cf);
+      var y=T+ph;
+      function seg(v,cor,topo){
+        if(v<=0) return '';
+        var h=v/yMax*ph; y-=h;
+        return '<rect x="'+x0+'" y="'+y+'" width="'+bw+'" height="'+h+'"'+(topo?' rx="3"':'')+
+          ' fill="'+cor+'" stroke="#0a0c0f" stroke-width="2"/>';
+      }
+      var ordem=[[mpSeg,'#3b82f6'],[cfSeg,'#64748b'],[prej,'#ef4444'],[lucro,'#10b981']].filter(function(o){return o[0]>0;});
+      ordem.forEach(function(o,j){ s+=seg(o[0],o[1], j===ordem.length-1); });
+      var topoY=y;
+      var ly=Y(x.fat);
+      pts.push([cx,ly]);
+      var pctv = x.fat? x.res/x.fat*100 : 0;
+      s+='<text x="'+cx+'" y="'+(Math.min(topoY,ly)-8)+'" text-anchor="middle" font-size="10.5" font-weight="700" fill="'+(pctv>=0?'#10b981':'#ef4444')+'">'+pct1(pctv)+'</text>';
+      s+='<text x="'+cx+'" y="'+(T+ph+16)+'" text-anchor="middle" font-size="10.5" fill="#8a93a3">'+x.m+'</text>';
+      s+='<rect x="'+(L+slot*i)+'" y="'+T+'" width="'+slot+'" height="'+ph+'" fill="transparent">'+
+        '<title>'+x.m+'\nFaturamento: '+brlK(x.fat)+'\nCusto material: '+brlK(x.mp)+'\nProcesso + custo fixo: '+brlK(x.cf)+'\nResultado: '+brlK(x.res)+' ('+pct1(pctv)+')</title></rect>';
+    });
+    s+='<polyline points="'+pts.map(function(p){return p[0]+','+p[1];}).join(' ')+'" fill="none" stroke="#60a5fa" stroke-width="2" stroke-dasharray="5 3"/>';
+    pts.forEach(function(p){ s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="3.5" fill="#60a5fa" stroke="#0a0c0f" stroke-width="2"/>'; });
+    document.getElementById('repChart').innerHTML =
+      '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Evolução mensal de faturamento, custos e resultado">'+s+'</svg>';
+  }
+
+  // ---- simulador ----
+  function simula(){
+    var f=fatores();
+    document.getElementById('sVolV').textContent=(f.v*100).toFixed(0)+'%';
+    document.getElementById('sPVV').textContent=(f.p*100).toFixed(0)+'%';
+    document.getElementById('sMPV').textContent=(f.m*100).toFixed(0)+'%';
+    document.getElementById('sCFV').textContent=(f.c*100).toFixed(0)+'%';
+    var fat=JUN.fat*(1+f.v)*(1+f.p), mp=JUN.mp*(1+f.v)*(1+f.m), cf=JUN.cf*(1+f.c), res=fat-mp-cf;
+    document.getElementById('soFat').textContent=brlK(fat);
+    var eRes=document.getElementById('soRes'), ePct=document.getElementById('soPct');
+    eRes.textContent=brlK(res); ePct.textContent=pct1(fat>0?res/fat*100:0);
+    eRes.style.color = res>=0?'#10b981':'#ef4444';
+    ePct.style.color = res>=0?'#10b981':'#ef4444';
+    desenhaGrafico();
+  }
+  [sVol,sPV,sMP,sCF].forEach(function(el){ el.addEventListener('input',simula); });
+  document.getElementById('soReset').addEventListener('click',function(){
+    sVol.value=0; sPV.value=0; sMP.value=0; sCF.value=0; simula();
+  });
+  simula();
+
+  // ---- 02 Vendas ----
+  var CLI = [
+    ['Autopeças Horizonte',148200,38500],
+    ['Metalsul Componentes',121400,26900],
+    ['Dinâmica OEM',96300,22400],
+    ['JVR Distribuidora',77900,19800],
+    ['Rovel Sistemas',63800,17200],
+    ['Campos & Filhos',52100,14600],
+    ['TecnoParts',47300,12900],
+    ['Blindar Automotiva',38900,10100],
+    ['Outros (15 clientes)',93705,25120]
+  ];
+  CLI.forEach(function(c){ c[1]*=ESCALA; c[2]=Math.round(c[2]*ESCALA); });
+  document.getElementById('vKpis').innerHTML = kpiHTML([
+    {l:'Faturamento', v:brlK(TOT_FAT), cls:'blue'},
+    {l:'Volume', v:nI(TOT_VOL), s:'unid.'},
+    {l:'Ticket médio', v:brl.format(TOT_FAT/TOT_VOL)},
+    {l:'Clientes ativos', v:'23'},
+    {l:'Linhas de produto', v:'6'}
+  ]);
+  // donut: mix por linha, calculado dos produtos
+  (function(){
+    var porLinha = {};
+    PRODS.forEach(function(p){ porLinha[p.linha]=(porLinha[p.linha]||0)+p.fat; });
+    var linhas = Object.keys(porLinha).map(function(k){return {n:k,v:porLinha[k]};})
+      .sort(function(a,b){return b.v-a.v;});
+    var cores = ['#3b82f6','#06b6d4','#10b981','#f59e0b','#8b5cf6','#ec4899'];
+    var cx=95,cy=95,r1=52,r2=86, a=-Math.PI/2, GAP=0.035, s='';
+    linhas.forEach(function(l,i){
+      var frac=l.v/TOT_FAT, a0=a+GAP/2, a1=a+frac*2*Math.PI-GAP/2; a+=frac*2*Math.PI;
+      function pt(r,ang){ return (cx+r*Math.cos(ang)).toFixed(1)+' '+(cy+r*Math.sin(ang)).toFixed(1); }
+      var large=(a1-a0)>Math.PI?1:0;
+      s+='<path d="M'+pt(r2,a0)+' A'+r2+' '+r2+' 0 '+large+' 1 '+pt(r2,a1)+
+        ' L'+pt(r1,a1)+' A'+r1+' '+r1+' 0 '+large+' 0 '+pt(r1,a0)+' Z" fill="'+cores[i%cores.length]+'">'+
+        '<title>'+l.n+': '+brlK(l.v)+' ('+pct1(frac*100)+')</title></path>';
+    });
+    s+='<text x="'+cx+'" y="'+(cy-4)+'" text-anchor="middle" font-size="11" fill="#8a93a3">Faturamento</text>';
+    s+='<text x="'+cx+'" y="'+(cy+14)+'" text-anchor="middle" font-size="13" font-weight="700" fill="#e8ecf2">'+(TOT_FAT/1e6).toLocaleString('pt-BR',{maximumFractionDigits:1})+' mi</text>';
+    document.getElementById('vDonut').innerHTML='<svg width="190" height="190" viewBox="0 0 190 190" role="img" aria-label="Mix de faturamento por linha">'+s+'</svg>';
+    document.getElementById('vDonutLeg').innerHTML = linhas.map(function(l,i){
+      return '<span class="it"><span class="sw" style="background:'+cores[i%cores.length]+'"></span>'+l.n+' · <b>'+pct1(l.v/TOT_FAT*100)+'</b></span>';
+    }).join('');
+  })();
+  // barras top clientes
+  (function(){
+    var top = CLI.slice(0,8), max = top[0][1];
+    document.getElementById('vCliBars').innerHTML = top.map(function(c){
+      return '<div class="hb" title="'+c[0]+': '+brlK(c[1])+'"><span class="lab">'+c[0]+'</span>'+
+        '<span class="track"><span class="bar" style="width:'+(c[1]/max*100).toFixed(1)+'%"></span></span>'+
+        '<span class="val">'+Math.round(c[1]/1000)+' mil</span></div>';
+    }).join('');
+    document.getElementById('vCliTbody').innerHTML = CLI.map(function(c,i){
+      return '<tr><td>'+(i+1)+'</td><td>'+c[0]+'</td><td class="num">'+nI(c[2])+'</td>'+
+        '<td class="num">'+brlK(c[1])+'</td><td class="num">'+brl.format(c[1]/c[2])+'</td>'+
+        '<td class="num">'+pct1(c[1]/TOT_FAT*100)+'</td></tr>';
+    }).join('');
+    var top3 = (CLI[0][1]+CLI[1][1]+CLI[2][1])/TOT_FAT*100;
+    document.getElementById('vConc').innerHTML = '&#9888; Os 3 maiores clientes concentram <b>'+pct1(top3)+'</b> do faturamento. Concentração alta: perder um deles compromete o resultado do mês.';
+  })();
+
+  // ---- 03 Produtos ----
+  function renderTbl(){
+    var f=document.getElementById('rpBusca').value.toLowerCase();
+    var flt=document.getElementById('rpFiltro').value;
+    var abc=document.getElementById('rpABC').value;
+    var ord=document.getElementById('rpOrdem').value;
+    var arr=PRODS.filter(function(p){
+      if(f && (p.id+' '+p.desc+' '+p.linha).toLowerCase().indexOf(f)<0) return false;
+      if(flt==='lucro' && p.mg<0) return false;
+      if(flt==='prej' && p.mg>=0) return false;
+      if(abc && p.abc!==abc) return false;
+      return true;
+    });
+    var fns={
+      fat:function(a,b){return b.fat-a.fat;},
+      mgtot:function(a,b){return b.mg*b.vol-a.mg*a.vol;},
+      mgpct:function(a,b){return b.mgPct-a.mgPct;},
+      vol:function(a,b){return b.vol-a.vol;}
+    };
+    arr.sort(fns[ord]);
+    if(document.getElementById('rpDir').value==='asc') arr.reverse();
+    document.getElementById('rpCnt').textContent=arr.length+' itens';
+    document.querySelector('#rpTbl tbody').innerHTML = arr.map(function(p){
+      var cls=p.mg>=0?'pos':'neg';
+      return '<tr class="sel-row" tabindex="0" role="button" data-id="'+p.id+'" aria-label="Abrir planilha de custos de '+p.desc+'">'+
+        '<td><span class="tag-'+p.abc+'">'+p.abc+'</span></td>'+
+        '<td><b>'+p.id+'</b></td>'+
+        '<td>'+p.desc+'</td>'+
+        '<td class="muted">'+p.linha+'</td>'+
+        '<td class="num">'+nI(p.vol)+'</td>'+
+        '<td class="num">'+n2(p.preco)+'</td>'+
+        '<td class="num">'+n2(p.custo)+'</td>'+
+        '<td class="num">'+brlK(p.fat)+'</td>'+
+        '<td class="num '+cls+'">'+n2(p.mg)+'</td>'+
+        '<td class="num '+cls+'">'+pct1(p.mgPct)+'</td>'+
+        '<td class="num '+cls+'">'+brlK(p.mg*p.vol)+'</td></tr>';
+    }).join('');
+    document.querySelectorAll('#rpTbl tbody tr').forEach(function(tr){
+      function abre(){ selProduto(tr.dataset.id); abrirAba('rp6'); }
+      tr.addEventListener('click',abre);
+      tr.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); abre(); } });
+    });
+  }
+  ['rpBusca','rpFiltro','rpABC','rpOrdem','rpDir'].forEach(function(id){
+    document.getElementById(id).addEventListener('input',renderTbl);
+  });
+  renderTbl();
+
+  // ---- 04 Reajustes ----
+  var MATS = [
+    ['AC-1020','Aço SAE 1020','Aços Vale',6.55,7.00],
+    ['FA-078','Fita de aço laminada','Aços Vale',7.50,7.75],
+    ['PA6-NAT','PA6 natural','Polimix',22.60,24.00],
+    ['LT-360','Latão CA-360','Metais Sul',33.20,37.00],
+    ['NBR-70','Composto NBR 70','Elastotec',36.50,38.00],
+    ['AL-6061','Alumínio 6061','Alumibras',30.80,32.00],
+    ['PP-H103','PP homopolímero','Braspol',12.10,12.00]
+  ];
+  // itens afetados: [ref, material, kg por peça]
+  var AFET = [
+    ['TU-450','LT-360',0.08],
+    ['SP-104','AC-1020',0.70],
+    ['BJ-220','PA6-NAT',0.045],
+    ['AB-118','FA-078',0.08],
+    ['MB-208','NBR-70',0.04],
+    ['AV-203','NBR-70',0.010]
+  ];
+  (function(){
+    var byId={}; PRODS.forEach(function(p){byId[p.id]=p;});
+    var byMat={}; MATS.forEach(function(m){byMat[m[0]]=m;});
+    var linhas = AFET.map(function(a){
+      var p=byId[a[0]], m=byMat[a[1]];
+      var aum=(m[4]-m[3])*a[2];
+      return {p:p, m:m, aum:aum, sug:p.preco+aum, imp:aum*p.vol};
+    }).sort(function(a,b){return b.imp-a.imp;});
+    var impTot = linhas.reduce(function(s,l){return s+l.imp;},0);
+    var altas = MATS.filter(function(m){return m[4]>m[3];}).length;
+    var maior = MATS.reduce(function(a,m){ var v=(m[4]/m[3]-1)*100; return v>a.v?{n:m[1],v:v}:a; },{n:'',v:-99});
+    document.getElementById('reajKpis').innerHTML = kpiHTML([
+      {l:'Materiais com alta', v:String(altas), s:'de '+MATS.length+' acompanhados na amostra', cls:'yellow'},
+      {l:'Maior alta', v:'+'+pct1(maior.v), s:maior.n, cls:'red'},
+      {l:'Itens afetados', v:String(linhas.length), s:'com preço sugerido calculado'},
+      {l:'Impacto se não repassar', v:brlK(impTot)+'/mês', cls:'red'}
+    ]);
+    document.getElementById('reajMatTbody').innerHTML = MATS.map(function(m){
+      var v=(m[4]/m[3]-1)*100;
+      var cls = v<0?'pos':(v>10?'neg':'warnc');
+      return '<tr><td>'+m[0]+'</td><td>'+m[1]+'</td><td class="muted">'+m[2]+'</td>'+
+        '<td class="num">'+n2(m[3])+'</td><td class="num">'+n2(m[4])+'</td>'+
+        '<td class="num '+cls+'"><b>'+(v>=0?'+':'')+pct1(v)+'</b></td></tr>';
+    }).join('');
+    document.getElementById('reajItTbody').innerHTML = linhas.map(function(l){
+      return '<tr><td><b>'+l.p.id+'</b></td><td>'+l.p.desc+'</td><td class="muted">'+l.m[1]+'</td>'+
+        '<td class="num">+'+n2(l.aum)+'</td>'+
+        '<td class="num">'+n2(l.p.preco)+'</td>'+
+        '<td class="num"><b>'+n2(l.sug)+'</b></td>'+
+        '<td class="num warnc">+'+pct1((l.sug/l.p.preco-1)*100)+'</td>'+
+        '<td class="num">'+nI(l.p.vol)+'</td>'+
+        '<td class="num neg">'+brlK(l.imp)+'</td></tr>';
+    }).join('');
+  })();
+
+  // ---- 05 Custo Fixo ----
+  var CFCAT = [
+    ['Folha e encargos',186400],
+    ['Aluguel e condomínio',41500],
+    ['Energia elétrica',32800],
+    ['Serviços e despesas gerais',28436],
+    ['Manutenção',22300],
+    ['Depreciação',16000]
+  ];
+  CFCAT.forEach(function(c){ c[1]*=ESCALA; });
+  (function(){
+    var tot = CFCAT.reduce(function(s,c){return s+c[1];},0);
+    document.getElementById('cfKpis').innerHTML = kpiHTML([
+      {l:'Estrutura total do mês', v:brlK(tot), s:pct1(tot/TOT_FAT*100)+' do faturamento', cls:'yellow'},
+      {l:'Folha e encargos', v:brlK(CFCAT[0][1]), s:pct1(CFCAT[0][1]/tot*100)+' da estrutura'},
+      {l:'Absorvido via taxas de setor', v:brlK(TOT_PROC), s:'folha direta + energia das máquinas'},
+      {l:'Custo fixo rateado', v:brlK(TOT_FIXO), s:'R$ 36,00/h × '+nI(TOT_HORAS)+' h produtivas'}
+    ]);
+    var max=CFCAT[0][1];
+    document.getElementById('cfBars').innerHTML = CFCAT.map(function(c){
+      return '<div class="hb" title="'+c[0]+': '+brlK(c[1])+'"><span class="lab">'+c[0]+'</span>'+
+        '<span class="track"><span class="bar" style="width:'+(c[1]/max*100).toFixed(1)+'%;background:#f59e0b"></span></span>'+
+        '<span class="val">'+Math.round(c[1]/1000)+' mil</span></div>';
+    }).join('');
+    document.getElementById('cfTbody').innerHTML = CFCAT.map(function(c){
+      return '<tr><td>'+c[0]+'</td><td class="num">'+brlK(c[1])+'</td><td class="num">'+pct1(c[1]/tot*100)+'</td></tr>';
+    }).join('')+'<tr><td><b>Total</b></td><td class="num"><b>'+brlK(tot)+'</b></td><td class="num"><b>100,0%</b></td></tr>';
+  })();
+
+  // ---- 06 Planilha de custos ----
+  var sel=document.getElementById('rpSel');
+  sel.innerHTML = PRODS.map(function(p){
+    return '<option value="'+p.id+'">'+p.id+' — '+p.desc+'</option>';
+  }).join('');
+  function selProduto(id){ sel.value=id; renderPlan(); }
+  function renderPlan(){
+    var p = PRODS.filter(function(x){return x.id===sel.value;})[0] || PRODS[0];
+    var cls=p.mg>=0?'pos':'neg';
+    var h='<div class="plan-head">'+
+      '<div class="item"><div class="l">Preço de venda</div><div class="v">'+brl.format(p.preco)+'</div></div>'+
+      '<div class="item"><div class="l">Custo total</div><div class="v">'+brl.format(p.custo)+'</div></div>'+
+      '<div class="item"><div class="l">Margem unitária</div><div class="v '+cls+'">'+brl.format(p.mg)+'</div></div>'+
+      '<div class="item"><div class="l">Margem %</div><div class="v '+cls+'">'+pct1(p.mgPct)+'</div></div>'+
+      '<div class="item"><div class="l">Volume no mês</div><div class="v">'+nI(p.vol)+' un</div></div>'+
+      '<div class="item"><div class="l">Margem total no mês</div><div class="v '+cls+'">'+brlK(p.mg*p.vol)+'</div></div>'+
+      '</div>';
+    h+='<div class="r-card"><h4>Materiais</h4><table class="plan-tbl"><thead><tr><th>Material</th><th class="num">Custo un</th></tr></thead><tbody>'+
+      '<tr><td>'+p.mpDesc+'</td><td class="num">'+n2(p.mp)+'</td></tr>'+
+      '</tbody></table></div>';
+    h+='<div class="r-card"><h4>Processos e custo fixo</h4><table class="plan-tbl"><thead><tr>'+
+      '<th>Setor / rateio</th><th class="num">Taxa R$/h</th><th class="num">Tempo (min)</th><th class="num">Custo un</th></tr></thead><tbody>'+
+      p.proc.map(function(l){
+        return '<tr><td>'+l[0]+'</td><td class="num">'+n2(l[1])+'</td><td class="num">'+String(l[2]).replace('.',',')+'</td><td class="num">'+n2(l[1]*l[2]/60)+'</td></tr>';
+      }).join('')+
+      '<tr><td>Custo fixo rateado por hora produtiva</td><td class="num">'+n2(FIXO_H)+'</td><td class="num">'+String(p.minTot).replace('.',',')+'</td><td class="num">'+n2(p.fixo)+'</td></tr>'+
+      '<tr><td><b>Custo total</b></td><td></td><td></td><td class="num"><b>'+n2(p.custo)+'</b></td></tr>'+
+      '<tr><td><b>Margem</b> (preço '+n2(p.preco)+' − custo '+n2(p.custo)+')</td><td></td><td></td><td class="num '+cls+'"><b>'+n2(p.mg)+' ('+pct1(p.mgPct)+')</b></td></tr>'+
+      '</tbody></table>'+
+      (p.mg<0?'<div class="alert-red">&#9888; Este item sai da fábrica dando prejuízo: cada unidade vendida custa '+brl.format(-p.mg)+' a mais do que o preço cobrado. No mês, '+brlK(-p.mg*p.vol)+' de resultado perdido.</div>':'')+
+      '</div>';
+    h+='<p class="muted" style="font-size:11px;margin:2px 2px 0">Toda linha desta planilha tem origem rastreável: material a último preço real de compra, taxa do setor calculada da folha e da energia, custo fixo rateado pela hora produtiva do mês.</p>';
+    document.getElementById('rpPlan').innerHTML=h;
+  }
+  sel.addEventListener('change',renderPlan);
+  renderPlan();
+})();
+</script>
+</body>
+</html>
